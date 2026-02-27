@@ -599,3 +599,116 @@ input[type="number"]:focus {
 
 
 
+/* Responsive Media Queries */
+
+@media (max-width: 992px) {
+    .dashboard-container {
+        margin: 20px auto;
+        padding: 0 16px;
+    }
+    
+    .dashboard {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar > div {
+        flex-direction: column;
+        gap: 15px;
+        padding: 0 16px;
+    }
+
+    .navbar-links {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .toggle-wrapper {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Table Responsiveness */
+    #weeklyTableContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 20px;
+        border-radius: var(--radius-md);
+    }
+
+    table {
+        min-width: 600px; /* Ensure table doesn't squash too much */
+    }
+
+    /* Calendar Responsiveness */
+    .calendar-date-grid {
+        gap: 8px;
+    }
+
+    .calendar-date-cell {
+        padding: 8px;
+        border-radius: 12px;
+    }
+
+    .calendar-date-cell strong {
+        font-size: 12px;
+    }
+
+    .status-tag, .status-label {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-header-cell {
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+
+    .calendar-date-cell {
+        aspect-ratio: auto;
+        min-height: 80px;
+        padding: 6px;
+    }
+
+    .leave-chip {
+        padding: 2px 6px;
+        font-size: 9px;
+    }
+
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .dashboard-header h2 {
+        font-size: 20px;
+    }
+}
+
+/* Fix for scrollbar appearance issues */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-glow);
+}
