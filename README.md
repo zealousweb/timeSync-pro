@@ -57,8 +57,12 @@ This application is not intended for production or public use.
 
 1.  **Login:** Click the extension icon and enter your portal credentials. This allows the extension to securely scrape your punch records.
 2.  **Dashboard:** Click the "Dashboard" icon in the popup to view your weekly and monthly summaries.
-3.  **Leave Logging:** Right-click on any date in the Monthly Calendar view to add or remove leave records.
-4.  **Syncing:** Use the refresh button for a manual sync, or enable Auto-Refresh in the settings page.
+3.  **Syncing:** Use the refresh button for a manual sync, or enable Auto-Refresh in the settings page.
+4.  **Adding Leaves:**
+    - Switch to the **Monthly View** in the Dashboard.
+    - **Right-Click** on any date in the calendar to open the Leave Management modal.
+    - Select the leave type (Full, Half, or Partial) and click **Save**.
+    - To remove a leave, open the same modal and click **Remove Leave**.
 
 ---
 
