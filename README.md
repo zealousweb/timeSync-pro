@@ -53,18 +53,6 @@ This application is not intended for production or public use.
 
 ---
 
-## 🛠️ Configuration
-
-To ensure the extension works with your internal portal:
-1.  Open `manifest.json`.
-2.  Update the `host_permissions` and `content_scripts` matches to point to your specific internal URL:
-    ```json
-    "host_permissions": ["http://your-internal-portal-url/*"],
-    "content_scripts": [{ "matches": ["http://your-internal-portal-url/*"], ... }]
-    ```
-
----
-
 ## 📖 How to Use
 
 1.  **Login:** Click the extension icon and enter your portal credentials. This allows the extension to securely scrape your punch records.
