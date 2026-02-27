@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Time Tracker</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div>
+        <div class="logo-section">
+          <span class="logo-icon">🕒</span>
+          <span class="logo-text">Time Tracker</span>
+        </div>
+        <div class="navbar-links">
+          <a href="dashboard.html" class="active">Dashboard</a>
+          <a href="settings.html">Settings</a>
+          <span id="userName" class="user-name"></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="dashboard-container">
+      <div id="weeklyDashboard" class="dashboard">
+        <header class="dashboard-header">
+          <h2 id="dashboardTitle">Weekly Insights</h2>
+          <div class="toggle-wrapper">
+            <div class="toggle-switch">
+              <div id="weeklyBtn" class="toggle-option active">Weekly</div>
+              <div id="monthlyBtn" class="toggle-option">Monthly</div>
+            </div>
+
+            <span id="load-monthly-data" title="Reload Monthly Data" class="reload-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+            </span>
+          </div>
+        </header>
+
+        <div id="weeklyTableContainer">
+          <table id="employeeTable">
+            <thead>
+              <tr>
+                <td id="prevWeek" class="nav-button">⏪</td>
+                <td colspan="2" id="currentWeek" class="current-week"></td>
+                <td id="nextWeek" class="nav-button">⏩</td>
+              </tr>
+              <tr>
+                <th>Day</th>
+                <th>In Time</th>
+                <th>Out Time</th>
+                <th>Total In-Time</th>
+              </tr>
+            </thead>
+            <tbody id="weekData"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="footer-label">Total Weekly In-Time</td>
+                <td id="weeklyTotal" class="footer-value primary-text">00:00</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="footer-label">Weekly Escape Time (Max 1hr)</td>
+                <td id="weeklyEscapeTime" class="footer-value warning-text">00:00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div id="monthlyCalendar" style="display: none">
+          <div id="calendarHeaderRow" class="calendar-header-row"></div>
+          <div id="calendarGrid" class="calendar-date-grid"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="punchModal" class="modal-overlay">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 id="modalDateTitle">Daily Punches</h3>
+          <span id="closeModal" class="close-icon">✕</span>
+        </header>
+        <ul id="modalPunchList" class="punch-list"></ul>
+      </div>
+    </div>
+
+    <div id="leaveModal" class="modal-overlay">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 id="leaveModalTitle">Manage Leave</h3>
+          <span id="closeLeaveModal" class="close-icon">✕</span>
+        </header>
+        <div class="leave-form">
+          <div class="form-group">
+            <label for="leaveType">Leave Category</label>
+            <select id="leaveType">
+              <option value="full">Full Day (8.5h)</option>
+              <option value="half">Half Day (4.5h)</option>
+              <option value="partial">Partial (1h)</option>
+            </select>
+          </div>
+          <div class="button-group">
+            <button id="saveLeaveBtn" class="btn btn-save">Save Changes</button>
+            <button id="removeLeaveBtn" class="btn btn-remove">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="navbar.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>

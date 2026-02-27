@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings | Time Tracker</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div>
+      <div class="logo-section">
+        <span class="logo-icon">🕒</span>
+        <span class="logo-text">Time Tracker</span>
+      </div>
+      <div class="navbar-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="settings.html" class="active">Settings</a>
+        <span id="userName" class="user-name"></span>
+        <button id="logoutBtn" class="btn">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard-container">
+    <div class="dashboard">
+      <header class="dashboard-header">
+        <h2>App Settings</h2>
+      </header>
+      
+      <section class="settings-list">
+        <!-- Auto Refresh Section -->
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Sync Automation</div>
+            <div class="setting-desc">Automatically fetch latest logs in the background</div>
+          </div>
+          <div class="setting-right">
+            <label class="switch">
+              <input type="checkbox" id="autoRefreshToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Refresh Interval -->
+        <div class="setting-row" id="refreshTimeContainer" style="display: none;">
+          <div class="setting-left">
+            <div class="setting-label">Refresh Interval</div>
+            <div class="setting-desc">Frequency of background sync (minutes)</div>
+          </div>
+          <div class="setting-right">
+            <input type="number" id="refreshTime" min="1" max="1440" placeholder="Mins" value="15" />
+            <button id="saveRefreshTimeBtn" class="btn btn-save">Update</button>
+          </div>
+        </div>
+
+        <!-- User Info / Status -->
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">User Profile</div>
+            <div id="userStatus" class="setting-desc">Currently logged in</div>
+          </div>
+          <div class="setting-right">
+            <button id="reconnectBtn" class="btn btn-reconnect">Reconnect</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="navbar.js"></script>
+  <script src="setting.js"></script>
+</body>
+</html>

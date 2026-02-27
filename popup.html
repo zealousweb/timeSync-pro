@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TimeSync Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="logo-section">
+            <div class="logo-icon">🕒</div>
+            <div class="title-group">
+                <h1>TimeSync Pro</h1>
+                <div id="liveSync" class="live-badge" style="display: none;">
+                    <span class="online-dot"></span>
+                    LIVE
+                </div>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <button id="refreshButton" class="top-link" title="Refresh Logs">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </button>
+            <a href="#" id="settingsLink" class="top-link" title="Settings">⚙️</a>
+            <a href="#" id="dashboardLink" class="top-link" title="Dashboard">🖥️</a>
+        </nav>
+    </header>
+
+    <div id="errorBox" class="error-box">
+        <!-- Error message -->
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="card">
+        <h2 class="mb-1">Authentication</h2>
+        <p class="time-label mb-1">Enter your credentials to sync logs</p>
+        <div class="form-group">
+            <input id="userIdInput" type="text" placeholder="User ID" />
+        </div>
+        <div class="form-group">
+            <input id="passwordInput" type="password" placeholder="Password" />
+        </div>
+        <button id="saveCreds" class="btn btn-primary">Save & Login</button>
+    </div>
+
+    <!-- Main Time Display -->
+    <div id="timeDisplay" class="card" style="display: none;">
+            
+
+        <div class="hero-section">
+            <div class="hero-content-left">
+                <div class="time-hero">
+                    <div id="total-in" class="big-time">00:00</div>
+                    <div class="time-label">Total In-Time Today</div>
+                </div>
+                <div class="hero-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Started at</span>
+                        <span id="first-in-time" class="info-value">--:--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-content-right">
+                <div class="weekly-chart">
+                    <div class="chart-header">
+                        <span class="chart-title">Weekly Rhythm</span>
+                    </div>
+                    <div class="bars-container">
+                        <div class="bar-wrapper">
+                            <span id="val-Mon" class="bar-value">0h</span>
+                            <div id="bar-Mon" class="bar shadow-3d"></div>
+                            <span class="bar-label">M</span>
+                        </div>
+                        <div class="bar-wrapper">
+                            <span id="val-Tue" class="bar-value">0h</span>
+                            <div id="bar-Tue" class="bar shadow-3d"></div>
+                            <span class="bar-label">T</span>
+                        </div>
+                        <div class="bar-wrapper">
+                            <span id="val-Wed" class="bar-value">0h</span>
+                            <div id="bar-Wed" class="bar shadow-3d"></div>
+                            <span class="bar-label">W</span>
+                        </div>
+                        <div class="bar-wrapper">
+                            <span id="val-Thu" class="bar-value">0h</span>
+                            <div id="bar-Thu" class="bar shadow-3d"></div>
+                            <span class="bar-label">T</span>
+                        </div>
+                        <div class="bar-wrapper">
+                            <span id="val-Fri" class="bar-value">0h</span>
+                            <div id="bar-Fri" class="bar shadow-3d"></div>
+                            <span class="bar-label">F</span>
+                        </div>
+                        <!-- <div class="bar-wrapper">
+                            <span id="val-Sat" class="bar-value">0h</span>
+                            <div id="bar-Sat" class="bar shadow-3d"></div>
+                            <span class="bar-label">S</span>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-group">
+            <div class="row">
+                <span class="label">Out-Time</span>
+                <span id="total-out" class="value">00:00</span>
+            </div>
+            <div class="row">
+                <span class="label">Remaining</span>
+                <span id="remaining" class="value highlight">00:00</span>
+            </div>
+            <div class="row">
+                <span class="label">Expected Departure</span>
+                <span id="escape-time" class="value">--:--</span>
+            </div>
+            <div class="row flexi-row">
+                <span class="label">Flexi Departure</span>
+                <span id="flexi-escape-time" class="value highlight-flexi">--:--</span>
+            </div>
+            
+            <div class="section-divider">Weekly OverView</div>
+            
+            <div class="row">
+                <span class="label">Total In</span>
+                <span id="week-total-in" class="value">00:00</span>
+            </div>
+            <div class="row">
+                <span class="label">Difference</span>
+                <span id="week-diff" class="value positive">00:00</span>
+            </div>
+            <div class="row full-width">
+                <span class="label">Remaining for Week</span>
+                <span id="week-remaining" class="value">00:00</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
