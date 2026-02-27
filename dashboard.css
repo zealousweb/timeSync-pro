@@ -59,6 +59,12 @@ body {
     gap: 10px;
 }
 
+.logo-img {
+    height: 70px; /* Increased from 24px */
+    width: auto;
+    object-fit: contain;
+}
+
 .navbar-links {
     display: flex;
     gap: 15px;
