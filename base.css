@@ -1,0 +1,53 @@
+:root {
+  /* Global Palette */
+  --bg-dark: #121317;
+  /* Antigravity dark surface */
+  --card-dark: rgba(30, 41, 59, 0.7);
+  --primary: #38bdf8;
+  --primary-glow: rgba(56, 189, 248, 0.4);
+  --secondary: #818cf8;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --white: #ffffff;
+
+  /* Effects */
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --radius-md: 12px;
+  --radius-lg: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.dashboard-container {
+  max-width: 1300px;
+  margin: 20px auto;
+  padding: 0 24px;
+}
+
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Background Decorations */
+body {
+  background: linear-gradient(-45deg, #0e1014, #121317, #13151a, #0d0f13);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+}

@@ -1,0 +1,86 @@
+/* Navbar */
+.navbar {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar>div {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.navbar a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    transition: 0.2s;
+}
+
+.navbar a:hover {
+    background: var(--primary-glow);
+    color: var(--primary);
+}
+
+.navbar a.active {
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--primary);
+}
+
+.user-name {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0 8px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+#logoutBtn {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+#logoutBtn:hover {
+    background: var(--danger);
+    color: white;
+}

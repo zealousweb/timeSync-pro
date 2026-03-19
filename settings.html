@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings | Time Tracker</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <title>Settings | TimeSync Pro</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="settings.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,8 +17,7 @@
   <nav class="navbar">
     <div>
       <div class="logo-section">
-        <span class="logo-icon">🕒</span>
-        <span class="logo-text">Time Tracker</span>
+        <img src="logo.png" alt="TimeSync Pro" class="logo-img">
       </div>
       <div class="navbar-links">
         <a href="dashboard.html">Dashboard</a>
@@ -27,53 +29,100 @@
   </nav>
 
   <main class="dashboard-container">
-    <div class="dashboard">
-      <header class="dashboard-header">
-        <h2>App Settings</h2>
-      </header>
-      
-      <section class="settings-list">
-        <!-- Auto Refresh Section -->
-        <div class="setting-row">
-          <div class="setting-left">
-            <div class="setting-label">Sync Automation</div>
-            <div class="setting-desc">Automatically fetch latest logs in the background</div>
+    <!-- Decorative Glows -->
+    <div class="glow-bg"></div>
+
+    <div class="dashboard-wrapper">
+      <div class="settings-grid">
+        <!-- Sync Settings Card -->
+        <div class="settings-card full-width">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9-9c1.657 0 3 4.03 3 9s-1.343 9-3 9m0-18c-1.657 0-3 4.03-3 9s1.343 9 3 9" />
+              </svg>
+            </div>
+            <h3>Sync Preferences</h3>
           </div>
-          <div class="setting-right">
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Background Sync</div>
+              <div class="setting-desc">Keep your logs up to date without opening the app (Refresh Interval (minutes))
+              </div>
+            </div>
             <label class="switch">
               <input type="checkbox" id="autoRefreshToggle" />
               <span class="slider"></span>
             </label>
           </div>
-        </div>
 
-        <!-- Refresh Interval -->
-        <div class="setting-row" id="refreshTimeContainer" style="display: none;">
-          <div class="setting-left">
-            <div class="setting-label">Refresh Interval</div>
-            <div class="setting-desc">Frequency of background sync (minutes)</div>
-          </div>
-          <div class="setting-right">
-            <input type="number" id="refreshTime" min="1" max="1440" placeholder="Mins" value="15" />
-            <button id="saveRefreshTimeBtn" class="btn btn-save">Update</button>
+          <div id="refreshTimeContainer" class="expanded-setting" style="display: none;">
+            <div class="input-group">
+              <input type="number" id="refreshTime" min="1" value="15" />
+              <button id="saveRefreshTimeBtn" class="btn-primary" type="button">Save</button>
+            </div>
           </div>
         </div>
 
-        <!-- User Info / Status -->
-        <div class="setting-row">
-          <div class="setting-left">
-            <div class="setting-label">User Profile</div>
-            <div id="userStatus" class="setting-desc">Currently logged in</div>
+        <!-- Holiday Management Card -->
+        <div class="settings-card full-width">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5z" />
+                <path d="M14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5z" />
+                <path d="M4 14a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5z" />
+                <path d="M14 14a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-5z" />
+              </svg>
+            </div>
+            <h3>Holiday Calendar</h3>
           </div>
-          <div class="setting-right">
-            <button id="reconnectBtn" class="btn btn-reconnect">Reconnect</button>
+
+          <div class="holiday-controls">
+            <div class="control-section">
+              <div class="setting-label-small">Import Schedule</div>
+              <div class="input-group">
+                <input type="file" id="icsFileInput" accept=".ics" />
+                <button id="importIcsBtn" class="btn-secondary" type="button">Import File</button>
+              </div>
+              <div id="icsImportStatus" class="status-message"></div>
+            </div>
+
+            <div class="control-section">
+              <div class="setting-label-small">Add Individual Date</div>
+              <div class="input-group">
+                <input type="date" id="manualHolidayDate" />
+                <input type="text" id="manualHolidayName" placeholder="e.g. Founder's Day" />
+                <button id="addHolidayBtn" class="btn-primary" type="button">Add Holiday</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="holiday-list-wrapper">
+            <div class="list-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Saved Holidays & Events</span>
+            </div>
+            <div id="holidayListContainer" class="holiday-list"></div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   </main>
 
   <script src="navbar.js"></script>
   <script src="setting.js"></script>
 </body>
+
 </html>

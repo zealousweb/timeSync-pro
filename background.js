@@ -70,8 +70,23 @@ function setRefreshAlarm() {
 
 // When extension is installed
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ refreshTime: DEFAULT_REFRESH_TIME, autoRefreshEnabled: false }, () => {
+    chrome.storage.local.set({ refreshTime: DEFAULT_REFRESH_TIME, autoRefreshEnabled: true }, () => {
         setRefreshAlarm();
+    });
+    chrome.storage.local.set({
+        holidayData: {
+            "04/03/2026": { "name": "Zealousweb - Dhuleti" },
+            "04/09/2026": { "name": "Zealousweb - Janmashtami" },
+            "08/11/2026": { "name": "Zealousweb - Diwali" },
+            "09/11/2026": { "name": "Zealousweb - Padatar Divas" },
+            "10/11/2026": { "name": "Zealousweb - Vikram Samvat New Year" },
+            "11/11/2026": { "name": "Zealousweb - Bhaiduj" },
+            "14/01/2027": { "name": "Zealousweb - Uttarayan" },
+            "15/01/2027": { "name": "Zealousweb - Post Uttarayan" },
+            "22/03/2027": { "name": "Zealousweb - Dhuleti" },
+            "25/12/2026": { "name": "Zealousweb - Christmas" },
+            "28/08/2026": { "name": "Zealousweb - Rakshabandhan" }
+        }
     });
 });
 
@@ -117,10 +132,18 @@ async function validateToken() {
         console.error("❌ No token found in chrome.storage.local.");
         return null;
     }
+    const getRightsUrl = `${url}/cosec/api/DailyAttendanceView/setUserDetailObj?token=${encodeURIComponent(token)}`;
 
     const apiUrl = `${url}/cosec/api/NPunchView/getDataListOnPageLoad?MenuID=12053&token=${encodeURIComponent(token)}`;
 
     try {
+        await fetch(getRightsUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Referer': `${url}/COSEC/Default/Default`
+            },
+        });
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -295,31 +318,26 @@ function loginToCosec(userId, password) {
 }
 
 async function fetchPunchDataForDate(token, sessionId, userId, password, dateStr, callback) {
-    const apiUrl = `http://192.168.1.200:88/cosec/api/NPunchView/changePDateSelection/?token=${token}`;
     const { userId: storedUserId } = await chrome.storage.local.get('userId');
 
     dateStr = formatDate(dateStr);
-
-    const payload = {
-        UserId: storedUserId,
-        PDate: dateStr,
-        DateSelection: 4,
-        AlwMonth: 1
-    };
-
+    const apiUrl = `http://192.168.1.200:88/cosec/api/Common/InitializeData?pDate=${dateStr}&token=${token}&userId=${storedUserId}`;
     fetch(apiUrl, {
-        method: "POST",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-            "Cookie": `UserID=${userId}; Password=${password}; ASP.NET_SessionId=${sessionId}; ProductID=COSEC`
-        },
-        body: JSON.stringify(payload)
+        method: "GET"
     })
         .then(res => res.json())
         .then(data => {
-            const result = data?.result?.grdData || [];
-            const groupedData = groupPunchData(dateStr, result);
+            const result = data?.modal?.GrdPunchDetail || [];
+            const filteredResult = result.map(item => {
+                const formatted = item.Edatetime ? new Date(item.Edatetime).toLocaleString("en-GB", { hour12: false }).replace(",", "") : null;
+                const filteredItem = {
+                    EVTSeqNo: item.EVTSeqNo,
+                    EDatetime: formatted,
+                    IOTypeText: item.IOType ? (item.IOType === "Exit" ? "in" : item.IOType === "Entry" ? "out" : `Unknown(${item.IOType})`) : "Unknown",
+                };
+                return filteredItem;
+            });
+            const groupedData = groupPunchData(dateStr, filteredResult);
             callback(groupedData);
         })
         .catch(err => {
@@ -330,6 +348,12 @@ async function fetchPunchDataForDate(token, sessionId, userId, password, dateStr
 }
 
 async function getPunchDataInRange(startDateStr, endDateStr) {
+
+    const { userId, password } = await chrome.storage.local.get(["userId", "password"]);
+    if (userId && password) {
+        handleLoginAndScrape({ userId, password });
+    }
+
     const url = "http://192.168.1.200:88";
     const token = await getToken();
     chrome.storage.local.remove("apiError");
@@ -393,7 +417,7 @@ async function getPunchDataInRange(startDateStr, endDateStr) {
 
     return new Promise((resolve) => {
         console.log("✅ All punch data fetched and processed:", punchDataByDate);
-        appendTimeData(punchDataByDate, () => {});
+        appendTimeData(punchDataByDate, () => resolve(punchDataByDate));
     });
 }
 
@@ -410,7 +434,7 @@ function groupPunchData(dateStr, data) {
         const { date, time } = parsed;
 
         grouped[date] = grouped[date] || [];
-        grouped[date].push({ type: item.IOTypeText.toLowerCase(), time });
+        grouped[date].push({ type: item.IOTypeText.toLowerCase(), time, seqNo: item.EVTSeqNo });
     });
 
     console.log("Grouped punch data before adding breaks:", grouped);
@@ -488,3 +512,35 @@ function toMinutes(t) {
     return h * 60 + m;
 }
 
+// Applies manualPunches overrides to a single date's server punch array.
+// Deleted server punches are excluded; edits and additions are applied.
+function getMergedPunchesForDate(dateStr, timeData, manualPunches) {
+    const punches = (timeData[dateStr] || []).map(p => ({ ...p }));
+    const overrides = (manualPunches || {})[dateStr] || [];
+
+    const deletedSeqNos = new Set(
+        overrides.filter(o => o.action === 'delete' && o.seqNo).map(o => o.seqNo)
+    );
+
+    for (const o of overrides) {
+        if (o.action === 'add') {
+            punches.push({ time: o.time, type: o.type });
+        } else if (o.action === 'edit') {
+            let idx;
+            if (o.seqNo) {
+                idx = punches.findIndex(p => p.seqNo === o.seqNo);
+            } else {
+                idx = punches.findIndex(
+                    p => !p.seqNo && p.time === o.origTime && p.type === o.origType
+                );
+            }
+            if (idx !== -1) {
+                punches[idx] = { ...punches[idx], time: o.time, type: o.type };
+            }
+        }
+    }
+
+    return punches
+        .filter(p => !(p.seqNo && deletedSeqNos.has(p.seqNo)))
+        .sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
+}
