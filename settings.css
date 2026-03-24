@@ -550,6 +550,93 @@ input[type="file"]::file-selector-button:hover {
     }
 }
 
+
+/* Keyboard Shortcut */
+.shortcut-badge {
+    font-family: 'Inter', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--primary);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 4px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+}
+
+.shortcut-recorder-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.shortcut-recorder-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.shortcut-recorder {
+    flex: 1;
+    min-height: 40px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+}
+
+.shortcut-recorder:focus,
+.shortcut-recorder.recording {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.shortcut-recorder-placeholder {
+    color: rgba(148, 163, 184, 0.5);
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.key-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Inter', monospace;
+    letter-spacing: 0.02em;
+}
+
+.key-sep {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 2px;
+}
+
+.shortcut-change-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+}
+
+
 /* Global Transitions */
 * {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;

@@ -68,6 +68,21 @@ for (let i = 1; i <= totalHours; i++) {
   number.style.top = `${y}px`;
 }
 
+// Loader helpers
+function startLoader() {
+  chrome.storage.local.set({ isLoading: true });
+  refreshButton.classList.add("loading");
+  refreshButton.disabled = true;
+  refreshButton.style.opacity = "0.5";
+}
+
+function stopLoader() {
+  chrome.storage.local.set({ isLoading: false });
+  refreshButton.classList.remove("loading");
+  refreshButton.disabled = false;
+  refreshButton.style.opacity = "1";
+}
+
 // Show error
 function showError(message) {
   errorBox.textContent = message;
@@ -198,6 +213,8 @@ saveCredsButton.addEventListener("click", async () => {
     chrome.storage.local.set({ userId, password }, async () => {
       saveCredsButton.textContent = "Logging..";
       saveCredsButton.style.backgroundColor = "#27ae60";
+      startLoader();
+
       try {
         const response = await triggerLogin(userId, password);
         if (response) {
@@ -205,14 +222,13 @@ saveCredsButton.addEventListener("click", async () => {
           timeDisplay.style.display = "block";
           navLinks.style.display = '';
           updateTimeDisplay();
-          refreshButton.disabled = true;
-          refreshButton.style.opacity = "0.5";
         } else {
           showError("❌ Invalid credentials");
         }
       } catch (err) {
         console.error("❌ Login error:", err);
-        showError("⚠️ Login failed");
+      } finally {
+        stopLoader();
       }
     });
   } else {
@@ -237,9 +253,7 @@ refreshButton.addEventListener("click", async () => {
 
     if (userId && password) {
       hideError();
-      refreshButton.classList.add("loading");
-      refreshButton.disabled = true;
-
+      startLoader();
       try {
         const response = await triggerLogin(userId, password);
         if (response) {
@@ -250,6 +264,8 @@ refreshButton.addEventListener("click", async () => {
       } catch (err) {
         console.error("❌ Refresh error:", err);
         showError("⚠️ Refresh failed");
+      } finally {
+        stopLoader();
       }
     } else {
       showError("Stored credentials not found.");
@@ -293,6 +309,7 @@ function updateTimeDisplay() {
 
     if (!rawTimes || rawTimes.length === 0) {
       updateUI("N/A", "N/A", "N/A", "N/A", now, 0, WEEKLY_TARGET_MS);
+      if (!result.isLoading) stopLoader();
       return;
     }
 
@@ -420,8 +437,7 @@ function updateTimeDisplay() {
       isClockedIn,
       dayTotals
     );
-    refreshButton.classList.remove("loading");
-    refreshButton.disabled = false;
+    if (!result.isLoading) stopLoader();
   });
 }
 
@@ -518,33 +534,20 @@ function updateUI(totalIn, totalOut, escapeTime, remaining, now, weekTotalInMs, 
   });
 }
 
-
-// function updateWorkClock(totalIn) {
-//   const now = getNow();
-//   const maxMinutes = 8.5 * 60;
-//   const secDeg = now.getSeconds() * 6;
-
-//   const hourHand = document.querySelector('.hand.hour');
-//   const minuteHand = document.querySelector('.hand.minute');
-//   const secondHand = document.querySelector('.hand.second');
-
-//   if (totalIn > maxMinutes) {
-//     const extraDeg = ((totalIn - maxMinutes) / 60) * 360;
-//     hourHand.style.display = 'none';
-//     minuteHand.style.display = 'block';
-//     minuteHand.style.backgroundColor = '#27ae60';
-//     minuteHand.style.transform = `translateX(-50%) rotate(${extraDeg}deg)`;
-//   } else {
-//     const hourDeg = (totalIn / maxMinutes) * 360;
-//     hourHand.style.display = 'block';
-//     hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
-//     minuteHand.style.display = 'none';
-//     minuteHand.style.backgroundColor = '';
-//     minuteHand.style.transform = `translateX(-50%) rotate(0deg)`;
-//   }
-//   secondHand.style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
-// }
-
-// Initial call and auto-update every second
+startLoader();
 updateTimeDisplay();
 setInterval(updateTimeDisplay, 1000);
+
+chrome.storage.local.get(["userId", "password"], async (result) => {
+  if (result.userId && result.password) {
+    try {
+      const response = await triggerLogin(result.userId, result.password);
+      if (response) {
+        updateTimeDisplay();
+      }
+    } catch (err) {
+      console.error("Auto-refresh error:", err);
+    }
+  }
+  stopLoader();
+});

@@ -1,6 +1,13 @@
 // ================================
 // 🧠 Runtime Message Listener
 // ================================
+
+chrome.commands.onCommand.addListener((command) => {
+    if (command === "open-extension") {
+        chrome.action.openPopup();
+    }
+});
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "getSessionIdAndCallAPI") {
         validateToken()
@@ -70,7 +77,7 @@ function setRefreshAlarm() {
 
 // When extension is installed
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ refreshTime: DEFAULT_REFRESH_TIME, autoRefreshEnabled: true }, () => {
+    chrome.storage.local.set({ refreshTime: DEFAULT_REFRESH_TIME, autoRefreshEnabled: false }, () => {
         setRefreshAlarm();
     });
     chrome.storage.local.set({

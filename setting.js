@@ -34,6 +34,80 @@ document.addEventListener("DOMContentLoaded", () => {
         saveRefreshTimeBtn.textContent = "Save";
     });
 
+
+    // ================================
+    // Keyboard Shortcut
+    // ================================
+    const currentShortcutEl = document.getElementById("currentShortcut");
+    const shortcutRecorder = document.getElementById("shortcutRecorder");
+    const shortcutRecorderText = document.getElementById("shortcutRecorderText");
+    const shortcutRecorderHint = document.getElementById("shortcutRecorderHint");
+    const clearShortcutRecorder = document.getElementById("clearShortcutRecorder");
+    const changeShortcutBtn = document.getElementById("changeShortcutBtn");
+
+    // Show the currently assigned shortcut
+    chrome.commands.getAll((commands) => {
+        const cmd = commands.find(c => c.name === "open-extension");
+        currentShortcutEl.textContent = cmd?.shortcut || "Not set";
+    });
+
+    // Key recorder: capture combo on keydown
+    shortcutRecorder.addEventListener("focus", () => {
+        shortcutRecorder.classList.add("recording");
+        shortcutRecorderHint.textContent = "Recording… press any key combination.";
+    });
+
+    shortcutRecorder.addEventListener("blur", () => {
+        shortcutRecorder.classList.remove("recording");
+        if (shortcutRecorderHint.textContent.startsWith("Recording")) {
+            shortcutRecorderHint.textContent = "";
+        }
+    });
+
+    shortcutRecorder.addEventListener("keydown", (e) => {
+        e.preventDefault();
+        const parts = [];
+        if (e.ctrlKey) parts.push("Ctrl");
+        if (e.altKey) parts.push("Alt");
+        if (e.shiftKey) parts.push("Shift");
+        if (e.metaKey) parts.push("Meta");
+
+        const key = e.key;
+        const ignoredKeys = ["Control", "Alt", "Shift", "Meta"];
+        if (!ignoredKeys.includes(key)) {
+            parts.push(key === " " ? "Space" : key.length === 1 ? key.toUpperCase() : key);
+        }
+
+        if (parts.length === 0) return;
+
+        const combo = parts.join("+");
+        shortcutRecorderText.innerHTML = parts
+            .map(p => `<kbd class="key-chip">${p}</kbd>`)
+            .join('<span class="key-sep">+</span>');
+        shortcutRecorderText.classList.remove("shortcut-recorder-placeholder");
+
+        const currentShortcut = currentShortcutEl.textContent;
+        if (combo === currentShortcut) {
+            shortcutRecorderHint.textContent = "Matches your current shortcut.";
+            shortcutRecorderHint.style.color = "var(--success, #4ade80)";
+        } else {
+            shortcutRecorderHint.textContent = `Recorded: ${combo} — click "Change in Chrome Settings" to apply.`;
+            shortcutRecorderHint.style.color = "var(--text-muted)";
+        }
+    });
+
+    clearShortcutRecorder.addEventListener("click", () => {
+        shortcutRecorderText.textContent = "Click & press keys…";
+        shortcutRecorderText.className = "shortcut-recorder-placeholder";
+        shortcutRecorderHint.textContent = "";
+        shortcutRecorder.focus();
+    });
+
+    // Open chrome://extensions/shortcuts
+    changeShortcutBtn.addEventListener("click", () => {
+        chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
+    });
+
     // ================================
     // Holiday management
     // ================================

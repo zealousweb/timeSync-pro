@@ -15,7 +15,6 @@ async function retryGetToken(maxRetries = 5, delay = 1000) {
             chrome.storage.local.set({ validLogin: "yes" });
             return token;
         }
-        console.warn(`⚠️ Token not found. Retrying... (${attempt}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
     }
     chrome.storage.local.set({ validLogin: "no" });
