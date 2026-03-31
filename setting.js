@@ -209,6 +209,9 @@ function loadHolidayList() {
         }
 
         entries.forEach(([dateStr, holiday]) => {
+            const [d, m, y] = dateStr.split("/").map(Number);
+            const dayName = new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: 'short' });
+
             const row = document.createElement("div");
             row.className = "holiday-row";
 
@@ -221,7 +224,7 @@ function loadHolidayList() {
 
             const dateSpan = document.createElement("span");
             dateSpan.className = "holiday-date";
-            dateSpan.textContent = dateStr;
+            dateSpan.textContent = `${dateStr} (${dayName})`;
 
             infoSide.appendChild(nameSpan);
             infoSide.appendChild(dateSpan);
