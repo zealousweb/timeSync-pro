@@ -11,7 +11,8 @@
         "activeTab",
         "clipboardWrite",
         "tabs",
-        "alarms"
+        "alarms",
+        "commands"
     ],
     "host_permissions": [
         "http://192.168.1.200:88/*"
