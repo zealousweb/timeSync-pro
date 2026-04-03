@@ -538,8 +538,9 @@ startLoader();
 updateTimeDisplay();
 setInterval(updateTimeDisplay, 1000);
 
-chrome.storage.local.get(["userId", "password"], async (result) => {
-  if (result.userId && result.password) {
+chrome.storage.local.get(["userId", "password", "refreshOnOpen"], async (result) => {
+  const shouldRefresh = result.refreshOnOpen === true;
+  if (shouldRefresh && result.userId && result.password) {
     try {
       const response = await triggerLogin(result.userId, result.password);
       if (response) {

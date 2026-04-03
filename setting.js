@@ -4,7 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const saveRefreshTimeBtn = document.getElementById("saveRefreshTimeBtn");
     const refreshTimeInput = document.getElementById("refreshTime");
 
-    chrome.storage.local.get(["autoRefreshEnabled", "refreshTime"], (result) => {
+    const refreshOnOpenToggle = document.getElementById("refreshOnOpenToggle");
+
+    chrome.storage.local.get(["autoRefreshEnabled", "refreshTime", "refreshOnOpen"], (result) => {
         if (result.autoRefreshEnabled) {
             autoRefreshToggle.checked = true;
             refreshTimeContainer.style.display = "block";
@@ -13,6 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (result.refreshTime) {
             refreshTimeInput.value = result.refreshTime;
         }
+
+        refreshOnOpenToggle.checked = result.refreshOnOpen === true;
+    });
+
+    refreshOnOpenToggle.addEventListener("change", () => {
+        chrome.storage.local.set({ refreshOnOpen: refreshOnOpenToggle.checked });
     });
 
     autoRefreshToggle.addEventListener("change", () => {

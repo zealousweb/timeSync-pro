@@ -75,26 +75,48 @@ function setRefreshAlarm() {
     });
 }
 
-// When extension is installed
-chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ refreshTime: DEFAULT_REFRESH_TIME, autoRefreshEnabled: false }, () => {
-        setRefreshAlarm();
-    });
-    chrome.storage.local.set({
-        holidayData: {
-            "04/03/2026": { "name": "Zealousweb - Dhuleti" },
-            "04/09/2026": { "name": "Zealousweb - Janmashtami" },
-            "08/11/2026": { "name": "Zealousweb - Diwali" },
-            "09/11/2026": { "name": "Zealousweb - Padatar Divas" },
-            "10/11/2026": { "name": "Zealousweb - Vikram Samvat New Year" },
-            "11/11/2026": { "name": "Zealousweb - Bhaiduj" },
-            "14/01/2027": { "name": "Zealousweb - Uttarayan" },
-            "15/01/2027": { "name": "Zealousweb - Post Uttarayan" },
-            "22/03/2027": { "name": "Zealousweb - Dhuleti" },
-            "25/12/2026": { "name": "Zealousweb - Christmas" },
-            "28/08/2026": { "name": "Zealousweb - Rakshabandhan" }
-        }
-    });
+const DEFAULT_SETTINGS = {
+    autoRefreshEnabled: false,
+    refreshOnOpen: false,
+    refreshTime: DEFAULT_REFRESH_TIME,
+    holidayData: {
+        "04/03/2026": { "name": "Zealousweb - Dhuleti" },
+        "04/09/2026": { "name": "Zealousweb - Janmashtami" },
+        "08/11/2026": { "name": "Zealousweb - Diwali" },
+        "09/11/2026": { "name": "Zealousweb - Padatar Divas" },
+        "10/11/2026": { "name": "Zealousweb - Vikram Samvat New Year" },
+        "11/11/2026": { "name": "Zealousweb - Bhaiduj" },
+        "14/01/2027": { "name": "Zealousweb - Uttarayan" },
+        "15/01/2027": { "name": "Zealousweb - Post Uttarayan" },
+        "22/03/2027": { "name": "Zealousweb - Dhuleti" },
+        "25/12/2026": { "name": "Zealousweb - Christmas" },
+        "28/08/2026": { "name": "Zealousweb - Rakshabandhan" }
+    }
+};
+
+// When extension is installed or updated
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+    if (reason === "install") {
+        // Fresh install: set all defaults
+        chrome.storage.local.set(DEFAULT_SETTINGS, () => {
+            setRefreshAlarm();
+        });
+    } else if (reason === "update") {
+        // Update: only fill in settings that don't exist yet (don't override user preferences)
+        chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS), (existing) => {
+            const toSet = {};
+            for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
+                if (existing[key] === undefined) {
+                    toSet[key] = value;
+                }
+            }
+            if (Object.keys(toSet).length > 0) {
+                chrome.storage.local.set(toSet, () => {
+                    setRefreshAlarm();
+                });
+            }
+        });
+    }
 });
 
 // When Chrome starts
