@@ -9,6 +9,10 @@ const table = document.getElementById("employeeTable");
 const calendar = document.getElementById("monthlyCalendar");
 const dashboardTitle = document.getElementById("dashboardTitle");
 const currentWeek = document.getElementById("currentWeek");
+const monthNav = document.querySelector(".month-nav");
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+if (monthNav) monthNav.style.display = "none";
 
 // ================================
 // Merge helpers
@@ -193,6 +197,8 @@ function hasMissingPunches(punchPairs) {
 }
 
 let currentMonday = null;
+let currentCalendarMonth = new Date().getMonth();
+let currentCalendarYear = new Date().getFullYear();
 
 function getMonday(date) {
     const d = new Date(date);
@@ -304,11 +310,17 @@ function renderMonthlyCalendar() {
     gridContainer.innerHTML = "";
 
     const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
+    const year = currentCalendarYear;
+    const month = currentCalendarMonth;
     const firstDay = new Date(year, month, 1);
     const startDay = firstDay.getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Update the month label in the navigation bar
+    const monthLabel = document.getElementById("monthLabel");
+    if (monthLabel) {
+        monthLabel.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
+    }
 
     ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach(day => {
         const cell = document.createElement("div");
@@ -445,6 +457,7 @@ weeklyBtn.addEventListener("click", () => {
     monthlyBtn.classList.remove("active");
     table.style.display = "table";
     calendar.style.display = "none";
+    if (monthNav) monthNav.style.display = "none";
     dashboardTitle.textContent = `📅 ${new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}`;
     if (!currentMonday) currentMonday = getMonday(new Date());
     renderWeeklyTableForMonday(currentMonday);
@@ -455,7 +468,7 @@ function getWeekNumber(date) {
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return Math.ceil((((d - yearStart) / ONE_DAY_MS) + 1) / 7);
 }
 
 monthlyBtn.addEventListener("click", () => {
@@ -463,8 +476,9 @@ monthlyBtn.addEventListener("click", () => {
     weeklyBtn.classList.remove("active");
     table.style.display = "none";
     calendar.style.display = "block";
+    if (monthNav) monthNav.style.display = "flex";
     renderMonthlyCalendar();
-    dashboardTitle.textContent = `📅 ${new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}`;
+    dashboardTitle.textContent = `📅 ${new Date(currentCalendarYear, currentCalendarMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}`;
     saveDashboardView('monthly');
 });
 
@@ -721,9 +735,8 @@ document.getElementById("closeModal").addEventListener("click", () => {
 const reloadBtn = document.getElementById("load-monthly-data");
 
 reloadBtn.addEventListener("click", () => {
-    const today = new Date();
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
+    const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
 
     const startDateStr = firstDay.toISOString().split("T")[0];
     const endDateStr = lastDay.toISOString().split("T")[0];
@@ -824,5 +837,32 @@ if (prevWeekBtn && nextWeekBtn) {
         if (!currentMonday) currentMonday = getMonday(new Date());
         currentMonday.setDate(currentMonday.getDate() + 7);
         renderWeeklyTableForMonday(currentMonday);
+    });
+}
+
+// ================================
+// Month navigation for monthly calendar
+// ================================
+const prevMonthBtn = document.getElementById('prevMonth');
+const nextMonthBtn = document.getElementById('nextMonth');
+
+if (prevMonthBtn && nextMonthBtn) {
+    prevMonthBtn.addEventListener('click', () => {
+        currentCalendarMonth--;
+        if (currentCalendarMonth < 0) {
+            currentCalendarMonth = 11;
+            currentCalendarYear--;
+        }
+        renderMonthlyCalendar();
+        dashboardTitle.textContent = `📅 ${new Date(currentCalendarYear, currentCalendarMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}`;
+    });
+    nextMonthBtn.addEventListener('click', () => {
+        currentCalendarMonth++;
+        if (currentCalendarMonth > 11) {
+            currentCalendarMonth = 0;
+            currentCalendarYear++;
+        }
+        renderMonthlyCalendar();
+        dashboardTitle.textContent = `📅 ${new Date(currentCalendarYear, currentCalendarMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}`;
     });
 }
